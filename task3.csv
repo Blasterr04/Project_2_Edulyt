@@ -1,0 +1,5 @@
+S_No,City,Date_of_Transaction,Card_Type,Exp_Type,Gender,Amount,Month,YearMonth,DayOfWeek,Date,TransactionCount,Cumulative_Amount
+1521,"Delhi, India",2013-10-04,Gold,Food,M,281924,2013-10,2013-10,Friday,2013-10-04,364,1272624
+190,"Ahmedabad, India",2013-10-05,Platinum,Bills,F,612572,2013-10,2013-10,Saturday,2013-10-05,41,1537482
+72,"Delhi, India",2013-10-04,Signature,Bills,F,550782,2013-10,2013-10,Friday,2013-10-04,24,1285819
+7564,"Bengaluru, India",2013-10-04,Silver,Food,F,205179,2013-10,2013-10,Friday,2013-10-04,1903,1115582
