@@ -1,0 +1,87 @@
+import pandas as pd
+df = pd.read_csv("C:\\Users\\lenovo\\Downloads\\Project_2.csv")
+df.head(None)
+
+
+Task 1:
+top_cities = df.groupby('City')['Amount'].sum().sort_values(ascending=False).head(5)
+total_spends = df['Amount'].sum()
+top_cities_percentage = (top_cities / total_spends) * 100
+
+top_cities.to_csv('task1.csv', index=True)
+top_cities_percentage.to_csv('task1_percentage.csv', index=True)
+
+
+Task 2:
+df['Month'] = pd.to_datetime(df['Date_of_Transaction']).dt.to_period('M')
+highest_spend_month = df.groupby(['Card_Type', 'Month'])['Amount'].sum().reset_index()
+highest_spend_month = highest_spend_month.loc[highest_spend_month.groupby('Card_Type')['Amount'].idxmax()]
+
+highest_spend_month.to_csv('task2.csv', index=False)
+
+
+Task 3:
+df_sorted = df.sort_values(by=['Card_Type', 'Date_of_Transaction'])
+df_sorted['Cumulative_Amount'] = df_sorted.groupby('Card_Type')['Amount'].cumsum()
+result = df_sorted[df_sorted['Cumulative_Amount'] >= 1000000].drop_duplicates(subset='Card_Type', keep='first')
+
+result.to_csv('task3.csv', index=False)
+
+
+Task 4:
+gold_spends = df[df['Card_Type'] == 'Gold'].groupby('City')['Amount'].sum()
+total_gold_spends = gold_spends.sum()
+lowest_percentage_city = (gold_spends / total_gold_spends).idxmin()
+
+pd.DataFrame({'City': [lowest_percentage_city]}).to_csv('task4.csv', index=False)
+
+Task 5:
+highest_expense = df.groupby(['City', 'Exp_Type'])['Amount'].sum().reset_index()
+highest_expense = highest_expense.loc[highest_expense.groupby('City')['Amount'].idxmax()]
+
+lowest_expense = df.groupby(['City', 'Exp_Type'])['Amount'].sum().reset_index()
+lowest_expense = lowest_expense.loc[lowest_expense.groupby('City')['Amount'].idxmin()]
+
+result = highest_expense[['City', 'Exp_Type']].merge(lowest_expense[['City', 'Exp_Type']], on='City', suffixes=('_highest', '_lowest'))
+
+result.to_csv('task5.csv', index=False)
+
+
+Task 6:
+female_spends = df[df['Gender'] == 'F'].groupby('Exp_Type')['Amount'].sum()
+total_spends_per_type = df.groupby('Exp_Type')['Amount'].sum()
+percentage_contribution = (female_spends / total_spends_per_type) * 100
+
+percentage_contribution.to_csv('task6.csv', index=True)
+
+
+Task 7:
+df['YearMonth'] = pd.to_datetime(df['Date_of_Transaction']).dt.to_period('M')
+jan_2014_spends = df[df['YearMonth'] == '2014-01'].groupby(['Card_Type', 'Exp_Type'])['Amount'].sum()
+dec_2013_spends = df[df['YearMonth'] == '2013-12'].groupby(['Card_Type', 'Exp_Type'])['Amount'].sum()
+mom_growth = (jan_2014_spends - dec_2013_spends) / dec_2013_spends * 100
+highest_growth = mom_growth.idxmax()
+
+pd.DataFrame([{'Card_Type_Exp_Type': highest_growth, 'MoM_Growth': mom_growth.max()}]).to_csv('task7.csv', index=False)
+
+
+Task 8:
+df['DayOfWeek'] = pd.to_datetime(df['Date_of_Transaction']).dt.day_name()
+weekend_df = df[df['DayOfWeek'].isin(['Saturday', 'Sunday'])]
+weekend_spend_ratio = weekend_df.groupby('City')['Amount'].sum() / weekend_df.groupby('City')['S_No'].count()
+highest_ratio_city = weekend_spend_ratio.idxmax()
+
+pd.DataFrame([{'City': highest_ratio_city, 'Ratio': weekend_spend_ratio.max()}]).to_csv('task8.csv', index=False)
+
+
+Task 9:
+df['Date'] = pd.to_datetime(df['Date_of_Transaction'])
+df['TransactionCount'] = df.groupby('City').cumcount() + 1
+city_reach_500 = df[df['TransactionCount'] == 500].copy()
+city_reach_500['Days'] = city_reach_500['Date'] - df.groupby('City')['Date'].transform('first')
+fastest_city = city_reach_500.loc[city_reach_500['Days'].idxmin()]['City']
+
+pd.DataFrame([{'City': fastest_city, 'Days': city_reach_500['Days'].min().days}]).to_csv('task9.csv', index=False)
+
+
+
